@@ -4,7 +4,6 @@
   "description": "Projeto LAMA | Turma Molina 2021 | Grupo 1",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
     "start": "node ./build/src/index.js"
   },
   "keywords": [
