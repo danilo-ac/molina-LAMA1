@@ -6,7 +6,7 @@
      "outDir": "./build",
      "rootDir": "./",
      "removeComments": true,
-     "strict": true,
+    //  "strict": true,
      "noImplicitAny": true,
      "esModuleInterop": true,
      "forceConsistentCasingInFileNames": true

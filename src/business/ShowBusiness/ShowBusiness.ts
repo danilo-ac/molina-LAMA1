@@ -1,5 +1,5 @@
 import CustomError from "../../error/CustomError"
-import { createShowDTO, showsAgenda } from "../../model/Show"
+import { createShowDTO, resultDatabaseModel, ShowsAgenda } from "../../model/Show"
 import { Authenticator, AuthenticationData } from "../../services/Authenticator"
 import { IdGenerator } from "../../services/IdGenerator"
 import ShowRepository from "./ShowRepository"
@@ -12,7 +12,7 @@ export default class ShowBusiness {
         private idGenerator: IdGenerator
     ) { }
 
-    
+
     public async createShow(
         createShowDTO: createShowDTO,
         token: string
@@ -58,6 +58,7 @@ export default class ShowBusiness {
             }
 
             const {
+                bandId,
                 weekDay,
                 startTime,
                 endTime
@@ -98,17 +99,40 @@ export default class ShowBusiness {
 
             const agenda = await this.showDatabase.getShowByWeekDay(weekDay.trim().toLocaleLowerCase())
 
-            const conflictedAgenda = !agenda ? false : agenda.filter((show: showsAgenda) => {
+            let repeatedShow = {}
+
+            if (
+                agenda
+                    .some(
+                        (item: resultDatabaseModel) => {
+                            if (item.bandId === bandId && item.weekDay === weekDay) {
+                                repeatedShow = item
+                                return true
+                            }
+                        })
+
+            ) {
+                throw new CustomError(
+                    "Invalid or Missing Value",
+                    406,
+                    {
+                        message: "Show already scheduled in same date",
+                        conflicts: repeatedShow
+                    }
+                )
+            }
+
+            const conflictedAgenda: ShowsAgenda[] = !agenda ? false : agenda.filter((show: ShowsAgenda): ShowsAgenda => {
                 if (show.startTime === startTime
                     || (startTime < show.startTime && endTime > show.startTime)
                     || (startTime < show.endTime && endTime > show.endTime)
                     || (startTime > show.startTime && endTime < show.endTime)
                 ) {
-                    return show
+                    return ShowsAgenda.toShowsAgendaModel(show)
                 }
             })
 
-            if (conflictedAgenda.length) {
+            if ( conflictedAgenda?.length) {
                 throw new CustomError(
                     "Invalid or Missing Value",
                     406,
@@ -133,6 +157,13 @@ export default class ShowBusiness {
 
         } catch (err: any) {
 
+            if(err.message === "jwt expired"){
+               throw new CustomError(
+                    "Token Error",
+                    403,
+                    "Token is expired.")
+            }
+
             if (err.sql) {
                 if (err?.errno === 1452) {
                     throw new CustomError(
@@ -155,6 +186,7 @@ export default class ShowBusiness {
         }
     }
 
+
     public async getShowByWeekDay(weekDay: string) {
 
         if (!["sexta", "sábado", "domingo"]
@@ -170,6 +202,11 @@ export default class ShowBusiness {
             const showsList = await this.showDatabase
                 .getShowByWeekDay(
                     weekDay.toLocaleLowerCase().trim()
+                )
+                .then(
+                    res => res
+                        .map((item: any) =>
+                            ShowsAgenda.toShowsAgendaModel(item))
                 )
 
             if (!showsList.length) {

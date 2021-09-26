@@ -1,5 +1,5 @@
 import { BaseDatabase } from "../BaseDatabase";
-import { createShowDTO } from "../../model/Show";
+import { createShowDTO, resultDatabaseModel } from "../../model/Show";
 import ShowRepository from '../../business/ShowBusiness/ShowRepository'
 import CustomError from "../../error/CustomError";
 
@@ -27,10 +27,13 @@ export default class SQLShowDatabase extends BaseDatabase implements ShowReposit
   }
 
 
-  public async getShowByWeekDay(weekDay: string): Promise<any> {
+  public async getShowByWeekDay(weekDay: string): Promise<resultDatabaseModel> {
     const result = await this.getConnection()
       .select({
+        showId:`${SQLShowDatabase.TABLE_BANDS}.id`,
         name: `${SQLShowDatabase.TABLE_BANDS}.name`,
+        bandId: `${SQLShowDatabase.TABLE_SHOWS}.band_id`,
+        weekDay: `${SQLShowDatabase.TABLE_SHOWS}.week_day`,
         musicGenre: `${SQLShowDatabase.TABLE_BANDS}.music_genre`,
         startTime: `${SQLShowDatabase.TABLE_SHOWS}.start_time`,
         endTime: `${SQLShowDatabase.TABLE_SHOWS}.end_time`

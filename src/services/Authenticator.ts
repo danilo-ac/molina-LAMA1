@@ -31,7 +31,7 @@ export class Authenticator {
       return result;
 
     } catch (err) {
-      console.log(err)
+      
       throw err
     }
   }
