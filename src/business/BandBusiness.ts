@@ -5,34 +5,60 @@ import { User, UserRole } from "../model/User";
 
 import { BandDataBase } from "../data/BandDataBase";
 
-export class BandBusiness{
-   constructor(private bandDataBase:BandDataBase){}
-    async registerBand(name:string,musicGenre:string,responsible:string,token:string){
-        if(!name || !musicGenre || !responsible){
+export class BandBusiness {
+
+
+    constructor(
+        private bandDataBase: BandDataBase,
+        private authenticator: Authenticator,
+        private idGenerator: IdGenerator
+    ) { }
+
+
+
+    async registerBand(
+        name: string,
+        musicGenre: string,
+        responsible: string,
+        token: string
+    ) {
+
+        if (!name || !musicGenre || !responsible) {
             throw new Error(" Parâmetros faltando ")
         }
-        const autheticator = new Authenticator()
-        const tokenData = autheticator.getData(token) 
-        if(tokenData.role !==UserRole.ADMIN){
+        // const autheticator = new Authenticator()
+
+        const tokenData = this.authenticator.getData(token)
+
+        if (tokenData.role !== UserRole.ADMIN) {
             throw new Error("Somente adm pode adicionar banda")
         }
-        const id = new IdGenerator().generate()
+        const id = this.idGenerator.generate()
+
         const band: Band = {
             id: id,
             name: name,
-            musicGenre:musicGenre,
+            musicGenre: musicGenre,
             responsible: responsible
         }
-       
+
         await this.bandDataBase.registerBand(band)
 
         return "Band adicionada!"
     }
-    async getBandById(id:string){
+
+
+
+    async getBandById(
+        id: string
+    ) {
+
         const band = await this.bandDataBase.getBandById(id)
-        if(band.length===0){
+
+        if (band.length === 0) {
             throw new Error("Id não existente!")
         }
+
         return band
     }
 }

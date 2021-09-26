@@ -4,9 +4,11 @@
   "description": "Projeto LAMA | Turma Molina 2021 | Grupo 1",
   "main": "index.js",
   "scripts": {
-    "specific-test": "clear && node ./node_modules/jest/bin/jest.js -i ShowBusiness.test.ts ",
+    "test-All": "clear && jest",
+    "test-User": "clear && node ./node_modules/jest/bin/jest.js -i UserBusiness.test.ts ",
+    "test-Band": "clear && node ./node_modules/jest/bin/jest.js -i BandBusiness.test.ts ",
+    "test-Show": "clear && node ./node_modules/jest/bin/jest.js -i ShowBusiness.test.ts ",
     "dev-start": "tsnd --transpile-only --ignore-watch node_modules ./src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node ./src/index.ts"
   },
   "keywords": [
