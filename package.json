@@ -4,7 +4,7 @@
   "description": "Projeto LAMA | Turma Molina 2021 | Grupo 1",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node ./src/index.ts"
+    "start": "tsnd --transpile-only --ignore-watch node_modules ./src/index.ts"
   },
   "keywords": [
     "api",
