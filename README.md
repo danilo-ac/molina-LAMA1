@@ -48,7 +48,7 @@
 
 #### Deploy
 - Heroku
-  - Base URI: ####
+  - Base URI: <code>https://labenu-music-awards.herokuapp.com/</code>
 
 <details>
 <summary>Enunciado do Projeto</summary>
