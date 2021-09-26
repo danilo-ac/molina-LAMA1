@@ -13,7 +13,7 @@ app.use("/user", userRouter);
 app.use("/show", showRouter)
 app.use("/band",bandRouter)
 
-const server = app.listen(3000, () => {
+const server = app.listen(process.env.PORT || 8000, () => {
     if (server) {
       const address = server.address() as AddressInfo;
       console.log(`Servidor rodando em http://localhost:${address.port}`);
